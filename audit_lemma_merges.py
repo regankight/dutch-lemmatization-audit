@@ -197,7 +197,7 @@ def main():
     notes.append(f"Total lemma entries in CSV: {len(lemma_info)}")
     notes.append(f"Total multi-form (merged) lemmas: {len(multi)}")
     notes.append(f"Criterion 1 multi_form  (top 1000 merged lemmas by total_frequency): {len(top1000_lemmas)}")
-    notes.append(f"Criterion 2 two_cycle   (>=1 form mapped via 2-cycle collapse):       {len(two_cycle_lemmas)}")
+    notes.append(f"Criterion 2 two_cycle   (>=1 form involved in a detected 2-cycle):    {len(two_cycle_lemmas)}")
     notes.append(f"Criterion 3 short_form  (merged lemma contains a 1-2 char form):      {len(short_form_lemmas)}")
     notes.append(
         f"Criterion 4 large_merge (nforms >= mean+2*stdev = {threshold:.2f}, "

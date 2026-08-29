@@ -1,14 +1,19 @@
 # Dutch Lemmatization Audit
 
-A small pipeline that cleans a raw Dutch word-frequency list into lemma
-groups, plus an independent QA script that audits its own merges for
-mistakes — written after an early version of the pipeline silently
-produced bad output.
+A Dutch word-frequency lemmatization pipeline, plus an independent QA
+audit that detects silent transformation errors — merges where the
+pipeline groups two different words together without saying so.
 
-This repo is an excerpt from a larger personal project ("which Dutch
-words should I learn first, in what order"). It contains only the
-cleaning + audit stage, since that's the part with an actual bug story
-worth documenting.
+The audit exists because an earlier canonicalization heuristic looked
+reasonable and wasn't: it turned an ambiguous lemmatizer oscillation
+into incorrect singular/plural merges. The fix deliberately prefers a
+visible false split over a silent false merge, and this repo includes
+the audit output used to verify that decision.
+
+This is the cleaning, failure-analysis, audit, and correction stage of
+a larger personal project ("which Dutch words should I learn first, in
+what order") — isolated here because it's the part with a real
+engineering decision behind it.
 
 ## What the pipeline does
 
@@ -78,9 +83,9 @@ The "force onto the longer form" heuristic was removed. A detected
 2-cycle is now left **unresolved**: each side of the oscillation keeps
 itself as its own canonical lemma (`kaart → kaart`, `kaarten → kaarten`;
 `lopen → lopen`, `loop → loop`). This project deliberately prefers a
-**false split over a false merge** — two entries that should have been
-one is a minor annoyance in a study list; one entry that silently
-mixes a singular and its plural is a real mistake.
+**false split over a false merge**: duplicate lemma groups are visible
+and recoverable, while a silent semantic conflation corrupts
+downstream frequency counts.
 
 Verified after the fix (from the actual audit output — see
 [`sample_output/`](sample_output/)):
@@ -114,7 +119,7 @@ a representative slice of the flagged rows (highest-frequency merges,
 plus every `two_cycle`/plural-collision case discussed above) is in
 [`sample_output/lemma_merge_audit_sample.csv`](sample_output/lemma_merge_audit_sample.csv).
 
-## Known limitation — read this before trusting the output
+## Validation scope and known limitations
 
 **Heuristic canonicalization is not the same thing as authoritative
 semantic or part-of-speech validation.** `simplemma` is a dictionary
@@ -132,8 +137,8 @@ concrete consequences:
   documented, not hidden — and deliberately left unfixed for now (a
   separate future pass), tracked in the audit notes.
 - **The audit is a triage tool, not a grader.** It tells you where to
-  look, not what the answer is. Every flagged row still needs a human
-  who knows Dutch to actually look at it.
+  look, not what the answer is. Flagged rows still require manual
+  linguistic review.
 
 If you need certainty about lemma correctness (e.g. for anything more
 than "which words should I study first"), this pipeline's output is a

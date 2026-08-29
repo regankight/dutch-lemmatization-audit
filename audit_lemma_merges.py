@@ -3,7 +3,7 @@
 QA audit of the lemma merges produced by clean_lemma_list.py.
 
 This script does NOT touch the pipeline or its output CSV. It only reads:
-  - nld_dutch_lemma_frequency.csv          (ground truth for current lemma groupings)
+  - nld_dutch_lemma_frequency.csv          (current pipeline output containing the lemma groupings being audited)
   - nld_mixed-typical_2012_10K-words.txt   (source, to rerun diagnostics on individual forms)
 
 and writes two new files:

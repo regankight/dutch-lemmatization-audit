@@ -1,0 +1,47 @@
+QA AUDIT NOTES - lemma merge diagnostics
+============================================================
+Total lemma entries in CSV: 12145
+Total multi-form (merged) lemmas: 1478
+Criterion 1 multi_form  (top 1000 merged lemmas by total_frequency): 1000
+Criterion 2 two_cycle   (>=1 form mapped via 2-cycle collapse):       195
+Criterion 3 short_form  (merged lemma contains a 1-2 char form):      15
+Criterion 4 large_merge (nforms >= mean+2*stdev = 4.04, mean=2.36, stdev=0.84): 53
+Union of all flagged lemmas written to lemma_merge_audit.csv: 1163
+
+============================================================
+SPECIFIC CASE DIAGNOSTICS
+============================================================
+
+--- he -> hebben ---
+  form: 'he'
+    greedy=True  -> 'hebben' (path: single_hop)
+    greedy=False -> 'hebben' (path: single_hop)
+    cause: plain simplemma dictionary lookup (same result with greedy on or off)
+  -> current CSV group: lemma='hebben' forms=['heeft', 'hebben', 'heb', 'had', 'hebt', 'hadden', 'he', 'gehad']
+
+--- fiets / fietsen / gefietst (post-fix: fiets<->fietsen no longer merged) ---
+  form: 'fiets'
+    greedy=True  -> 'fiets' (path: two_cycle)
+    greedy=False -> 'fiets' (path: two_cycle)
+    cause: 2-cycle detected (simplemma oscillates for this token) - left unresolved, token kept as its own lemma
+  form: 'fietsen'
+    greedy=True  -> 'fietsen' (path: two_cycle)
+    greedy=False -> 'fietsen' (path: two_cycle)
+    cause: 2-cycle detected (simplemma oscillates for this token) - left unresolved, token kept as its own lemma
+  form: 'gefietst'
+    greedy=True  -> 'fietsen' (path: single_hop)
+    greedy=False -> 'fietsen' (path: single_hop)
+    cause: plain simplemma dictionary lookup (same result with greedy on or off)
+  -> current CSV group: lemma='fietsen' forms=['fietsen', 'gefietst']
+  -> current CSV group: lemma='fiets' forms=['fiets']
+
+--- bij / bijen -> ? ---
+  form: 'bij'
+    greedy=True  -> 'bij' (path: self)
+    greedy=False -> 'bij' (path: self)
+    cause: token was left unchanged by simplemma (self)
+  form: 'bijen'
+    greedy=True  -> 'bij' (path: single_hop)
+    greedy=False -> 'bij' (path: single_hop)
+    cause: plain simplemma dictionary lookup (same result with greedy on or off)
+  -> current CSV group: lemma='bij' forms=['bij', 'bijen']

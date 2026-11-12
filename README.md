@@ -1,14 +1,10 @@
 # Dutch Lemmatization Audit
 
-A Dutch word-frequency lemmatization pipeline, plus an independent QA
-audit that detects silent transformation errors — merges where the
-pipeline groups two different words together without saying so.
+**A Dutch word-list cleaning pipeline, plus an independent audit that catches silent data errors: two different words merged together without warning.**
 
-The audit exists because an earlier canonicalization heuristic looked
-reasonable and wasn't: it turned an ambiguous lemmatizer oscillation
-into incorrect singular/plural merges. The fix deliberately prefers a
-visible false split over a silent false merge, and this repo includes
-the audit output used to verify that decision.
+- **Result:** the audit checked 12,145 word groups, flagged 1,163 suspicious merges, and caught a rule that was silently merging singular nouns into plurals (e.g. *kaart* "map" into *kaarten* "maps").
+- **Why it matters:** the fix chooses a *visible* mistake (an extra duplicate group) over a *silent* one (two words wrongly counted as one), because silent errors corrupt everything downstream.
+- **Stack:** Python · NLP · data cleaning · data-quality auditing · simplemma
 
 This is the cleaning, failure-analysis, audit, and correction stage of
 a larger personal project ("which Dutch words should I learn first, in
